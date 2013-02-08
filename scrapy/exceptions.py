@@ -52,4 +52,10 @@ class ScrapyDeprecationWarning(Warning):
 
 class ContractFail(AssertionError):
     """Error raised in case of a failing contract"""
-    pass
+
+    def __init__(self, message):
+        from scrapy.utils.project import get_project_settings
+        settings = get_project_settings()
+        if settings['CONTRACT_FAIL_CALLBACK']:
+            settings['CONTRACT_FAIL_CALLBACK'](self, message)
+        super(ContractFail, self).__init__(message)
